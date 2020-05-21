@@ -1,10 +1,10 @@
 region          = "us-west-1"
 
-cidr_block      = "10.10.0.0/16"
+cidr_block      = "10.13.0.0/16"
 
 namespace       = "partsunlimited"
 
-stage           = "prod"
+stage           = "admin"
 
 environment     = "Production"
 
