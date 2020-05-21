@@ -1,7 +1,7 @@
-
 variable "region" {
     type      =  string
 }
+
 
 variable "namespace" {
   description = "Namespace (e.g. `cp` or `cloudposse`)"
@@ -9,21 +9,16 @@ variable "namespace" {
   default     = ""
 }
 
-
-variable "cidr_ab" {
-    type = map
-    default = {
-                admin       = "10.13"
-                qa          = "10.14"
-                production  = "10.10"
-
-    }
+variable "environment" {
+  type        = string
+  default     = ""
+  description = "Environment, e.g. 'prod', 'staging', 'dev', 'pre-prod', 'UAT'"
 }
 
-variable "environment" {
-    type = string
-    description = "Options: admin, development, qa, staging, production"
-
+variable "stage" {
+  description = "Stage (e.g. `prod`, `dev`, `staging`)"
+  type        = string
+  default     = ""
 }
 
 variable "name" {
@@ -90,32 +85,15 @@ variable "enable_default_security_group_with_custom_rules" {
   default     = true
 }
 
-locals {
-    cidr_c_private_subnets  = 1
-    cidr_c_public_subnets   = 64
-
-    max_private_subnets     = 2
-    max_public_subnets      = 2
-}
-
 data "aws_availability_zones" "available" {
+
     state = "available"
+
 }
 
 locals {
+
     availability_zones = data.aws_availability_zones.available.names
+
 }
 
-
-locals {
-    private_subnets = [
-        for az in local.availability_zones : 
-            "${lookup(var.cidr_ab, var.environment)}.${local.cidr_c_private_subnets + index(local.availability_zones, az)}.0/24"
-            if index(local.availability_zones, az) < local.max_private_subnets
-        ]
-    public_subnets = [
-        for az in local.availability_zones : 
-            "${lookup(var.cidr_ab, var.environment)}.${local.cidr_c_public_subnets + index(local.availability_zones, az)}.0/24"
-            if index(local.availability_zones, az) < local.max_public_subnets
-        ]
-}
