@@ -91,9 +91,12 @@ data "aws_availability_zones" "available" {
 
 }
 
+
+ // Lookup the first 2 AZ's to use in the region to deploy the Admin VPC
 locals {
 
-    availability_zones = data.aws_availability_zones.available.names
+    az1 = data.aws_availability_zones.available.names[0]
+    az2 = data.aws_availability_zones.available.names[1]
 
 }
 
